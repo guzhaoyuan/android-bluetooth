@@ -3,4 +3,4 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" android:showAsAction="never" />
 </menu>
-<!-- From: file:/C:/Users/gzy/Desktop/交付内容/BaiduMapsApiDemo2/app/src/main/res/menu/menu_batt_station.xml -->
+<!-- From: file:/Users/zion/Desktop/SRT/blue_demo/app/src/main/res/menu/menu_batt_station.xml -->

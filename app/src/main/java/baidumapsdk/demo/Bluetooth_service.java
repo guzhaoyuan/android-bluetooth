@@ -75,6 +75,9 @@ public class Bluetooth_service extends Service{
     private BluetoothSocket btSocket;
     private Set<BluetoothDevice> btSet;
 
+    public InputStream mInputStream = null;
+    public OutputStream mOutputStream = null;
+
     // 蓝牙连接相关广播
     private BroadcastReceiver btConnectedReceiver;
     private BroadcastReceiver btDisConnectReceiver;
@@ -90,7 +93,7 @@ public class Bluetooth_service extends Service{
             .fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     //蓝牙mac地址用以配对
-    private String btMac = "20:14:00:00:1F:32";
+    private String btMac = "20:15:04:09:68:04";
     private static Handler mHandler;//把handler设置成static不知会不会有问题，毕竟不是在这里定义的
 
     // 输出流
@@ -117,12 +120,24 @@ public class Bluetooth_service extends Service{
      *
      */
     public class myBinder extends Binder {
-        public void start_Bluetooth(){
+        public void start_Bluetooth() {
             Log.v(TAG, "start Bluetooth_Service");
             start();
         }
-        public void set_handler(Handler handler){
+
+        public void set_handler(Handler handler) {
             setHandler(handler);
+        }
+
+        public void send_Char(char ch) {
+            if(mOutputStream!=null){
+                try {
+                    mOutputStream.write(ch);
+                } catch (IOException e) {
+                    //TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -183,7 +198,6 @@ public class Bluetooth_service extends Service{
             try{
                 btSocket = btDevice.createRfcommSocketToServiceRecord(MY_UUID);
                 btSocket.connect();
-                //outputStream = btSocket.getOutputStream();
                 Log.v(TAG, "bluetooth connected");
                 //outputStream = btSocket.getOutputStream();
             }catch(IOException e){
@@ -199,7 +213,6 @@ public class Bluetooth_service extends Service{
                 btSocket = btDevice.createRfcommSocketToServiceRecord(MY_UUID);
                 Log.v(TAG, "bluetooth connecting");
                 btSocket.connect();
-                //outputStream = btSocket.getOutputStream();
                 Log.v(TAG, "bluetooth connected");
                 //outputStream = btSocket.getOutputStream();
             }catch(IOException e){
@@ -215,8 +228,7 @@ public class Bluetooth_service extends Service{
     public class ConnectedThread extends Thread {
 
         public final BluetoothSocket mSocket;
-        public final InputStream mInputStream;
-        public final OutputStream mOutputStream;
+
 
         public ConnectedThread(BluetoothSocket socket, String socketType){
             Log.d(TAG, "create ConnectedThread: " + socketType);
@@ -236,7 +248,6 @@ public class Bluetooth_service extends Service{
 
             mInputStream = tmpIn;
             mOutputStream = tmpOut;
-            //mOutputStream = outputStream;
         }
 
         /**
@@ -289,7 +300,7 @@ public class Bluetooth_service extends Service{
          * 解析STM发送过来的包并更新UI
          * @param buffer
          */
-        public void parsePackFromSTM(byte[] buffer){
+        public void parsePackFromSTM(byte[] buffer) {
             byte[] currentElectro = new byte[4];
             System.arraycopy(buffer,68,currentElectro,0,4);
             Log.v(TAG,"currentElectro = "+Arrays.toString(currentElectro));
@@ -306,8 +317,8 @@ public class Bluetooth_service extends Service{
         public void sendPack(byte[] data){
             byte[] Pack = new byte[92];
             System.arraycopy(data,0,Pack,0,data.length);
-            System.arraycopy(deviceID,0,Pack,1,deviceID.length);//设置设备ID
-            Log.v(TAG,"Packaging Complete ");
+            System.arraycopy(deviceID, 0, Pack, 1, deviceID.length);//设置设备ID
+            Log.v(TAG, "Packaging Complete ");
             try {
                 try {
                     sleep(1000);
@@ -321,6 +332,21 @@ public class Bluetooth_service extends Service{
                 e.printStackTrace();
             }
         }
+
+        public void sendChar(char ch) {
+            try {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "wait for message to be sent failed");
+                }
+                mOutputStream.write(ch);
+            } catch (IOException e) {
+                //TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
 
         /**
          * 发包，不对包进行封装直接传输数据
@@ -462,7 +488,7 @@ public class Bluetooth_service extends Service{
         public void onReceive(Context arg0, Intent intent) {
             // TODO Auto-generated method stub
             mHandler.obtainMessage(Constants.MESSAGE_SCAN_OVERTIME).sendToTarget();
-            Log.v(TAG,"scan bluetooth over time");
+            Log.v(TAG,"scan bluetooth finish");
         }
     }
 

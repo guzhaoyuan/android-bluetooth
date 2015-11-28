@@ -56,48 +56,23 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".DemoApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="sC5t7ch51iwjoqLpsS7UgOOD" />
 
         <activity
-            android:name=".Intelligent_electrombile"
-            android:label="@string/title_activity_intelligent_electrombile" >
+            android:name=".info"
+            android:label="@string/title_activity_info" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".info"
-            android:label="@string/title_activity_info" >
 
-        </activity>
-        <activity
-            android:name=".FragmentTableActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/demo_name_basemap"
-            android:screenOrientation="portrait" >
-        </activity>
         <activity
             android:name=".PoiSearchDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/demo_name_poi"
             android:screenOrientation="portrait" >
-        </activity>
-
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" >
-        </service>
-
-        <activity
-            android:name=".BattStation"
-            android:label="@string/title_activity_batt_station" >
         </activity>
 
         <service
